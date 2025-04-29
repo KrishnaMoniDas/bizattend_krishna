@@ -6,8 +6,8 @@ import { Briefcase } from "lucide-react";
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-background via-secondary/30 to-background">
-       {/* Card will now implicitly use glass-effect */}
-      <Card className="w-full max-w-md shadow-xl">
+       {/* Apply glass-effect class to the Card */}
+      <Card className="w-full max-w-md shadow-xl glass-effect">
         <CardHeader className="items-center text-center">
           <Briefcase className="h-12 w-12 text-primary mb-4" />
           <CardTitle className="text-3xl font-bold text-primary">Welcome to BizAttend</CardTitle>

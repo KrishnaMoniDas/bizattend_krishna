@@ -4,9 +4,10 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster"; // Import Toaster
 
+// Configure Poppins font
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // Include necessary weights
+  weight: ["300", "400", "500", "600", "700", "800"], // Include necessary weights
   variable: "--font-sans", // Define CSS variable for the font
 });
 

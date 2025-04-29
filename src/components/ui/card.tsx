@@ -9,7 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg bg-card text-card-foreground shadow-md glass-effect", // Apply glass-effect, bg-card, and shadow
+      "rounded-lg border bg-card text-card-foreground shadow-lg glass-effect", // Apply glass-effect, bg-card (with transparency), border and shadow
       className
     )}
     {...props}
@@ -33,10 +33,11 @@ const CardTitle = React.forwardRef<
   HTMLParagraphElement, // Changed from div to p for semantic correctness
   React.HTMLAttributes<HTMLHeadingElement> // Use heading attributes
 >(({ className, ...props }, ref) => (
-  <p // Changed from div to p
+  // Use <p> tag, but style like a heading. Adjust size as needed.
+  <p
     ref={ref}
     className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
+      "text-2xl font-semibold leading-none tracking-tight", // Style appropriately
       className
     )}
     {...props} // Props passed down correctly

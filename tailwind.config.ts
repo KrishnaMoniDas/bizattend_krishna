@@ -63,7 +63,7 @@ export default {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		fontFamily: {
-            sans: ['var(--font-sans)', 'sans-serif'], // Ensure Poppins is the default sans font
+            sans: ['var(--font-sans)', 'sans-serif'], // Use the CSS variable for Poppins
         },
       keyframes: {
   			'accordion-down': {

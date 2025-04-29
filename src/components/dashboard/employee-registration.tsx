@@ -94,8 +94,8 @@ async function scanRfidTag(): Promise<string | null> {
 export function EmployeeRegistration() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isDialogOpen, setIsDialogOpen] useState<boolean>(false);
-  const [isScanning, setIsScanning] useState<boolean>(false);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false); // Fixed: Added '='
+  const [isScanning, setIsScanning] = useState<boolean>(false); // Fixed: Added '='
   const [currentEmployee, setCurrentEmployee] = useState<Partial<Employee>>({});
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
    const [error, setError] = useState<string | null>(null);
@@ -133,7 +133,9 @@ export function EmployeeRegistration() {
   };
 
    const handleDelete = async (employeeId: string) => {
-      if (!confirm('Are you sure you want to delete this employee?')) return;
+      // Use confirm for simplicity; consider a confirmation dialog for better UX
+      const confirmed = window.confirm('Are you sure you want to delete this employee?');
+      if (!confirmed) return;
       try {
          await deleteEmployee(employeeId);
          toast({ title: 'Success', description: 'Employee deleted.' });
@@ -170,7 +172,8 @@ export function EmployeeRegistration() {
     }
 
     try {
-      await saveEmployee(currentEmployee as Employee); // Type assertion okay after validation
+      // Type assertion is okay here after validation checks
+      await saveEmployee(currentEmployee as Omit<Employee, 'id'> & { id?: string });
       toast({ title: 'Success', description: `Employee ${isEditMode ? 'updated' : 'added'}.` });
       setIsDialogOpen(false);
       loadEmployees(); // Refresh the list

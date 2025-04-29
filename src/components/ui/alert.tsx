@@ -9,9 +9,9 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-background/70 text-foreground border-border/50", // Default with 70% opacity background
+        default: "bg-background/60 text-foreground border-border/40", // Default with transparency and slightly less visible border
         destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/10", // Destructive with 10% opacity background
+          "border-destructive/40 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/15", // Destructive with transparency and less visible border
       },
     },
     defaultVariants: {
@@ -28,7 +28,7 @@ const Alert = React.forwardRef<
     ref={ref}
     role="alert"
     className={cn(alertVariants({ variant }), className)}
-    {...props} // Props passed here, no need for style attribute for backdrop unless supporting very old browsers
+    {...props}
   />
 ))
 Alert.displayName = "Alert"
