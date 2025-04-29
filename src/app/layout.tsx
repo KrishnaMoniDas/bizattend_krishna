@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google"; // Import Poppins
+import { Poppins } from "next/font/google"; // Correct import
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster"; // Import Toaster
@@ -22,10 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* Apply the font variable directly to the html or body tag */}
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          poppins.variable // Use Poppins variable
+          poppins.variable // Apply the font variable class name
         )}
       >
         {children}

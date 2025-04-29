@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Card, CardContent } from '@/components/ui/card'; // Import Card for wrapping
 import { Nfc, LogIn, LogOut, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -176,8 +177,8 @@ export function RfidClockPrompt() {
           title: `Success: ${employeeInfo.name} Clocked ${actionType === 'in' ? 'In' : 'Out'}`,
           description: `Time: ${format(result.eventTime, 'PPpp')}`,
           duration: 5000,
-          variant: 'default',
-          icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+          // Use check circle for success toast
+          action: <CheckCircle className="h-5 w-5 text-green-500" />,
         });
         setShowPrompt(false); // Close dialog on success
         setEmployeeInfo(null); // Reset state
@@ -191,6 +192,8 @@ export function RfidClockPrompt() {
         title: 'Error',
         description: `Could not record clock ${actionType} event for ${employeeInfo.name}.`,
         variant: 'destructive',
+        // Use alert circle for error toast
+        action: <AlertCircle className="h-5 w-5 text-red-500" />,
       });
     } finally {
       setIsSubmitting(false);
@@ -205,7 +208,8 @@ export function RfidClockPrompt() {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4 border border-dashed border-primary/50 rounded-lg text-center min-h-[150px] justify-center relative glass-card bg-primary/5">
+    // Wrap the prompt content in a Card for consistent styling
+    <Card className="relative min-h-[200px]">
        {/* Overlay while loading employee data */}
        {isLoading && (
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-lg z-10">
@@ -222,17 +226,18 @@ export function RfidClockPrompt() {
           </div>
        )}
 
-       <Nfc className={`h-12 w-12 ${isListening ? 'text-primary animate-pulse' : 'text-muted-foreground'}`} />
-       <p className="text-lg font-medium">Ready for RFID Scan</p>
-       <p className="text-sm text-muted-foreground">
-         Present your employee badge to the reader to clock in or out.
-       </p>
+      <CardContent className="flex flex-col items-center space-y-4 p-6 text-center justify-center h-full">
+        <Nfc className={`h-12 w-12 ${isListening ? 'text-primary animate-pulse' : 'text-muted-foreground'}`} />
+        <p className="text-lg font-medium text-foreground">Ready for RFID Scan</p>
+        <p className="text-sm text-muted-foreground">
+          Present your employee badge to the reader to clock in or out.
+        </p>
 
         {/* Button to manually trigger scan for demo */}
         <Button onClick={triggerTestScan} variant="outline" size="sm" className="mt-4">
             Simulate Scan (Test)
         </Button>
-
+      </CardContent>
 
       <Dialog open={showPrompt && !!employeeInfo && !isLoading && !isSubmitting} onOpenChange={(open) => { if (!open) { setShowPrompt(false); setEmployeeInfo(null); setScannedTag(null); }}}>
         <DialogContent>
@@ -251,7 +256,7 @@ export function RfidClockPrompt() {
                 onClick={() => handleClockAction('in')}
                 disabled={employeeInfo?.isClockedIn || isSubmitting}
                 className="flex-1"
-                variant="default"
+                variant="default" // Use primary color (Teal) for clock-in
               >
                 <LogIn className="mr-2 h-4 w-4" /> Clock In
               </Button>
@@ -259,18 +264,20 @@ export function RfidClockPrompt() {
                 onClick={() => handleClockAction('out')}
                 disabled={!employeeInfo?.isClockedIn || isSubmitting}
                 className="flex-1"
-                variant="destructive"
+                variant="destructive" // Use destructive (Red) for clock-out
               >
                 <LogOut className="mr-2 h-4 w-4" /> Clock Out
               </Button>
             </div>
+             {isSubmitting && (
+                <div className="flex items-center justify-center text-sm text-muted-foreground pt-2">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
+                </div>
+            )}
           </div>
-           <DialogFooter>
-             {/* Optional: Add a cancel button if needed, though closing the dialog works */}
-             {/* <Button variant="outline" onClick={() => setShowPrompt(false)}>Cancel</Button> */}
-           </DialogFooter>
+           {/* Removed DialogFooter as buttons are now inline */}
         </DialogContent>
       </Dialog>
-    </div>
+    </Card>
   );
 }

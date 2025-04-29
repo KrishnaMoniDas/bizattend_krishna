@@ -4,15 +4,14 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
-   // Base glassmorphism styles
-   "bg-background/70 backdrop-blur-md border-white/10", // Adjust alpha and blur as needed
+  // Base styles including glass-effect
+  "relative w-full rounded-lg border p-4 glass-effect [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground",
   {
     variants: {
       variant: {
-        default: "text-foreground border-border/50", // Keep default text, adjust border if needed
+        default: "bg-background/70 text-foreground border-border/50", // Default with 70% opacity background
         destructive:
-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/10", // Lighter red background for destructive
+          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive bg-destructive/10", // Destructive with 10% opacity background
       },
     },
     defaultVariants: {
@@ -29,18 +28,7 @@ const Alert = React.forwardRef<
     ref={ref}
     role="alert"
     className={cn(alertVariants({ variant }), className)}
-    // Apply backdrop-filter conditionally for browser support
-    style={{
-        // Fallback for browsers not supporting backdrop-filter
-        backgroundColor: variant === 'destructive' ? 'hsla(var(--destructive) / 0.1)' : 'hsla(var(--background) / 0.7)',
-        // Apply backdrop-filter if supported
-        // @ts-ignore - Suppress TS error for vendor prefix
-        ...(typeof window !== 'undefined' && ('backdropFilter' in document.documentElement.style || 'WebkitBackdropFilter' in document.documentElement.style) && {
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-         }),
-    }}
-    {...props}
+    {...props} // Props passed here, no need for style attribute for backdrop unless supporting very old browsers
   />
 ))
 Alert.displayName = "Alert"

@@ -5,7 +5,8 @@ import { Briefcase } from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-background to-secondary">
+    <main className="flex min-h-screen flex-col items-center justify-center p-8 bg-gradient-to-br from-background via-secondary/30 to-background">
+       {/* Card will now implicitly use glass-effect */}
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="items-center text-center">
           <Briefcase className="h-12 w-12 text-primary mb-4" />
@@ -15,12 +16,12 @@ export default function Home() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center space-y-4">
-          <p className="text-center">
+          <p className="text-center text-foreground">
             Simplify your workforce management with easy clock-ins, automated payroll, and smart anomaly detection.
           </p>
           <Button asChild className="w-full" variant="default">
             {/* In a real app, this would likely check auth status and redirect */}
-            {/* For now, let's link to a placeholder dashboard */}
+            {/* Link to the dashboard */}
             <Link href="/dashboard">Get Started</Link>
           </Button>
            {/* Add login/signup links later */}

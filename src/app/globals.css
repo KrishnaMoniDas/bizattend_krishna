@@ -8,101 +8,101 @@ body {
 
 @layer base {
   :root {
-    /* BizAttend Theme - Purple Tint */
-    --background: 240 5% 96%; /* Lighter Gray */
-    --foreground: 240 10% 3.9%; /* Dark text */
+    /* BizAttend Theme - Teal/Gray/Orange */
+    --background: 210 20% 98%; /* Light Gray */
+    --foreground: 210 10% 23%; /* Dark Gray Text */
 
-    /* Adjusted Card for Glassmorphism */
-    --card: 270 50% 98% / 0.6; /* Semi-transparent light purple */
-    --card-foreground: 240 10% 3.9%;
+    /* Card with slight transparency built-in */
+    --card: 210 20% 96% / 0.8; /* Slightly transparent Light Gray */
+    --card-foreground: 210 10% 23%;
 
-    /* Adjusted Popover/Dialog for Glassmorphism */
-    --popover: 270 50% 98% / 0.7; /* Semi-transparent light purple */
-    --popover-foreground: 240 10% 3.9%;
+    /* Popover with slight transparency */
+    --popover: 210 20% 96% / 0.9; /* Slightly transparent Light Gray */
+    --popover-foreground: 210 10% 23%;
 
-    --primary: 270 60% 50%; /* Vibrant Purple */
+    --primary: 180 100% 25%; /* Teal (#008080) */
     --primary-foreground: 0 0% 100%; /* White text on primary */
 
-    --secondary: 270 30% 92%; /* Lighter Purple */
-    --secondary-foreground: 270 60% 30%; /* Darker Purple text */
+    --secondary: 210 15% 90%; /* Lighter Gray (#F0F0F0 - adjusted HSL) */
+    --secondary-foreground: 180 80% 15%; /* Darker Teal text */
 
-    --muted: 240 5% 90%; /* Muted Gray */
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 210 15% 94%; /* Muted Gray */
+    --muted-foreground: 210 10% 65%; /* Muted Text */
 
-    --accent: 300 70% 60%; /* Accent Purple/Pink */
+    --accent: 39 100% 50%; /* Orange (#FFA500) */
     --accent-foreground: 0 0% 100%; /* White text on accent */
 
     --destructive: 0 74.2% 50.2%; /* Destructive Red */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 270 20% 85%; /* Light purple border */
-    --input: 270 40% 95% / 0.5; /* Semi-transparent input bg */
-    --ring: 270 60% 55%; /* Purple for focus rings */
+    --border: 210 15% 88%; /* Light gray border */
+    --input: 210 20% 92% / 0.7; /* Semi-transparent light gray input bg */
+    --ring: 180 90% 35%; /* Teal for focus rings */
 
-    --chart-1: 270 70% 60%;
-    --chart-2: 300 70% 60%;
-    --chart-3: 250 60% 55%;
-    --chart-4: 285 65% 58%;
-    --chart-5: 315 75% 65%;
+    --chart-1: 180 70% 40%;
+    --chart-2: 200 70% 45%;
+    --chart-3: 39 80% 55%;
+    --chart-4: 210 50% 60%;
+    --chart-5: 190 60% 50%;
 
     --radius: 0.5rem;
 
-    /* Sidebar theme (adjust if needed) */
-    --sidebar-background: 270 40% 95% / 0.7;
-    --sidebar-foreground: 240 10% 3.9%;
-    --sidebar-primary: 270 60% 50%;
+    /* Sidebar theme (adjust if needed, using main theme colors) */
+    --sidebar-background: 210 25% 97% / 0.8;
+    --sidebar-foreground: 210 10% 23%;
+    --sidebar-primary: 180 100% 25%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 300 70% 60%;
+    --sidebar-accent: 39 100% 50%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 270 20% 85%;
-    --sidebar-ring: 270 60% 55%;
+    --sidebar-border: 210 15% 88%;
+    --sidebar-ring: 180 90% 35%;
   }
 
   .dark {
-    /* Define dark mode colors if needed, maintaining the Purple theme */
-    --background: 240 10% 10%;
-    --foreground: 0 0% 98%;
+    /* BizAttend Dark Theme - Teal/Dark Gray/Orange */
+    --background: 210 10% 12%; /* Dark Gray */
+    --foreground: 0 0% 98%; /* Light text */
 
-    --card: 270 30% 15% / 0.7;
+    --card: 210 10% 15% / 0.8; /* Slightly transparent Dark Gray */
     --card-foreground: 0 0% 98%;
 
-    --popover: 270 30% 15% / 0.8;
+    --popover: 210 10% 15% / 0.9; /* Slightly transparent Dark Gray */
     --popover-foreground: 0 0% 98%;
 
-    --primary: 270 70% 65%; /* Brighter Purple for dark mode */
-    --primary-foreground: 240 10% 3.9%;
+    --primary: 180 80% 45%; /* Brighter Teal for dark mode */
+    --primary-foreground: 210 10% 5%; /* Dark text on primary */
 
-    --secondary: 270 20% 25%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 210 10% 25%; /* Darker Gray */
+    --secondary-foreground: 0 0% 95%; /* Light text on secondary */
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 210 8% 20%; /* Muted Dark Gray */
+    --muted-foreground: 210 5% 65%;
 
-    --accent: 300 80% 70%; /* Brighter Accent for dark mode */
-    --accent-foreground: 240 10% 3.9%;
+    --accent: 39 100% 60%; /* Brighter Orange for dark mode */
+    --accent-foreground: 210 10% 5%; /* Dark text on accent */
 
-    --destructive: 0 62.8% 40.6%;
+    --destructive: 0 62.8% 45.6%; /* Darker Red */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 270 15% 30%;
-    --input: 270 20% 20% / 0.6;
-    --ring: 270 70% 70%;
+    --border: 210 10% 30%; /* Dark gray border */
+    --input: 210 10% 20% / 0.7; /* Semi-transparent dark gray input bg */
+    --ring: 180 70% 55%; /* Teal for focus rings */
 
-    --chart-1: 270 65% 70%;
-    --chart-2: 300 65% 70%;
-    --chart-3: 250 55% 65%;
-    --chart-4: 285 60% 68%;
-    --chart-5: 315 70% 75%;
+    --chart-1: 180 70% 50%;
+    --chart-2: 200 70% 55%;
+    --chart-3: 39 90% 65%;
+    --chart-4: 210 50% 70%;
+    --chart-5: 190 60% 60%;
 
      /* Sidebar dark theme */
-    --sidebar-background: 270 25% 20% / 0.8;
+    --sidebar-background: 210 12% 18% / 0.8;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 270 70% 65%;
-    --sidebar-primary-foreground: 240 10% 3.9%;
-    --sidebar-accent: 300 80% 70%;
-    --sidebar-accent-foreground: 240 10% 3.9%;
-    --sidebar-border: 270 15% 30%;
-    --sidebar-ring: 270 70% 70%;
+    --sidebar-primary: 180 80% 45%;
+    --sidebar-primary-foreground: 210 10% 5%;
+    --sidebar-accent: 39 100% 60%;
+    --sidebar-accent-foreground: 210 10% 5%;
+    --sidebar-border: 210 10% 30%;
+    --sidebar-ring: 180 70% 55%;
   }
 }
 
@@ -116,41 +116,15 @@ body {
   }
 }
 
-/* Add Glassmorphism styles */
+/* Add Glassmorphism styles using Tailwind utilities + backdrop-filter */
 @layer components {
-  .glass-card {
-    @apply bg-card shadow-xl backdrop-blur-md border border-white/10 rounded-lg;
-     /* Fallback for browsers not supporting backdrop-filter */
-    background-color: hsla(var(--card));
-    /* Apply backdrop-filter if supported */
-    @supports (backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px)) {
-        background-color: hsla(var(--card)); /* Use HSLa for transparency */
-       backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-    }
-  }
-
-   .glass-dialog {
-     @apply bg-popover shadow-xl backdrop-blur-lg border border-white/10 rounded-lg;
-      /* Fallback */
-     background-color: hsla(var(--popover));
+  .glass-effect {
      /* Apply backdrop-filter if supported */
-     @supports (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px)) {
-         background-color: hsla(var(--popover)); /* Use HSLa for transparency */
-         backdrop-filter: blur(20px);
-         -webkit-backdrop-filter: blur(20px);
+     @supports (backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px)) {
+       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
      }
-   }
-
-   .glass-input {
-      @apply bg-input backdrop-blur-sm border border-white/10;
-       /* Fallback */
-      background-color: hsla(var(--input));
-      /* Apply backdrop-filter if supported */
-      @supports (backdrop-filter: blur(5px)) or (-webkit-backdrop-filter: blur(5px)) {
-          background-color: hsla(var(--input));
-          backdrop-filter: blur(5px);
-          -webkit-backdrop-filter: blur(5px);
-      }
-   }
+     /* Base border for subtle edge */
+     @apply border border-white/10;
+  }
 }

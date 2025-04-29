@@ -9,8 +9,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "glass-card text-card-foreground", // Apply glass-card class
-      // Removed original border, bg-card, shadow-sm as they are handled by glass-card
+      "rounded-lg bg-card text-card-foreground shadow-md glass-effect", // Apply glass-effect, bg-card, and shadow
       className
     )}
     {...props}

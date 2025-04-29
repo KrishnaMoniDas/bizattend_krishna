@@ -7,10 +7,10 @@ function Skeleton({
   return (
     <div
       className={cn(
-          "animate-pulse rounded-md bg-muted/80", // Slightly more transparent muted color
-          // Optional: Add a subtle shimmer animation
-          // "relative overflow-hidden",
-          // "after:absolute after:inset-0 after:-translate-x-full after:animate-[shimmer_1.5s_infinite] after:bg-gradient-to-r after:from-transparent after:via-muted/40 after:to-transparent",
+          "animate-pulse rounded-md bg-muted/60", // Increase opacity slightly for better visibility
+          // Optional shimmer animation: keep if desired
+          "relative overflow-hidden",
+          "after:absolute after:inset-0 after:-translate-x-full after:animate-[shimmer_1.5s_infinite] after:bg-gradient-to-r after:from-transparent after:via-muted/30 after:to-transparent", // Adjust shimmer opacity if needed
           className
       )}
       {...props}
@@ -18,7 +18,7 @@ function Skeleton({
   )
 }
 
-// Optional: Define shimmer keyframes in globals.css or here if needed
+// Ensure shimmer animation is defined (e.g., in globals.css or tailwind config)
 /*
 @layer utilities {
   @keyframes shimmer {
@@ -28,6 +28,5 @@ function Skeleton({
   }
 }
 */
-
 
 export { Skeleton }
