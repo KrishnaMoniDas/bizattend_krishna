@@ -12,14 +12,12 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
+  			card: 'hsl(var(--card))', // Keep original definition for fallback/reference
+            'card-hsl': 'var(--card)', // Expose HSL variable for glass effect
+  			'card-foreground': 'hsl(var(--card-foreground))',
+  			popover: 'hsl(var(--popover))', // Keep original definition
+            'popover-hsl': 'var(--popover)', // Expose HSL variable for glass effect
+  			'popover-foreground': 'hsl(var(--popover-foreground))',
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
@@ -41,7 +39,8 @@ export default {
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
   			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
+  			input: 'hsl(var(--input))', // Keep original definition
+            'input-hsl': 'var(--input)', // Expose HSL variable for glass effect
   			ring: 'hsl(var(--ring))',
   			chart: {
   				'1': 'hsl(var(--chart-1))',
@@ -52,6 +51,7 @@ export default {
   			},
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
+                'hsl': 'var(--sidebar-background)', // Expose HSL variable
   				foreground: 'hsl(var(--sidebar-foreground))',
   				primary: 'hsl(var(--sidebar-primary))',
   				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
@@ -82,11 +82,18 @@ export default {
   				to: {
   					height: '0'
   				}
-  			}
+  			},
+             // Add shimmer animation
+             shimmer: {
+               '0%': { transform: 'translateX(-100%)' },
+               '100%': { transform: 'translateX(100%)' },
+             },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+             // Add shimmer animation utility
+             shimmer: 'shimmer 1.5s infinite linear', // Adjust duration/timing as needed
   		}
   	}
   },

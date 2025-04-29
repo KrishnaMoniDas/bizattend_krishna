@@ -1,56 +1,79 @@
-import { ClockInComponent } from "@/components/dashboard/clock-in";
+import { EmployeeRegistration } from "@/components/dashboard/employee-registration";
+import { RfidClockPrompt } from "@/components/dashboard/rfid-clock-prompt";
 import { PayrollSummary } from "@/components/dashboard/payroll-summary";
 import { AttendanceAnomalies } from "@/components/dashboard/attendance-anomalies";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Clock, AlertTriangle, IndianRupee } from "lucide-react";
+import { Briefcase, Clock, AlertTriangle, IndianRupee, UserPlus, Nfc } from "lucide-react";
 
 export default function DashboardPage() {
-  // Example data - replace with actual data fetching
-  const employeeId = "EMP123"; // Fetch current user's employee ID
+  // Example data - replace with actual data fetching/context
+  const employeeId = "EMP123"; // This might become less relevant if clock-in is purely RFID based
+  const isAdmin = true; // Example admin status to show registration
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40">
-       {/* Simple Header for now */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <div className="flex min-h-screen w-full flex-col bg-gradient-to-br from-background to-secondary/50">
+      {/* Header */}
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-border/50 bg-background/80 backdrop-blur-sm px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
         <div className="flex items-center gap-2">
           <Briefcase className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-semibold">BizAttend Dashboard</h1>
         </div>
-        {/* Add User Profile Dropdown later */}
+        {/* User Profile Dropdown placeholder */}
       </header>
-      <main className="flex flex-1 flex-col gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-          <Card className="shadow-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Clock In / Out</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <ClockInComponent employeeId={employeeId} />
-            </CardContent>
-          </Card>
+
+      <main className="flex flex-1 flex-col gap-6 p-4 sm:px-6 md:gap-8">
+         {/* RFID Clock-in Section */}
+         <Card className="shadow-md">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">RFID Clock In/Out</CardTitle>
+            <Nfc className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            {/* This component will handle the interaction with the ESP32/RFID reader */}
+            <RfidClockPrompt />
+          </CardContent>
+        </Card>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Employee Registration (Admin Only) */}
+          {isAdmin && (
+            <Card className="shadow-sm lg:col-span-1">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Manage Employees</CardTitle>
+                <UserPlus className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <EmployeeRegistration />
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Payroll Summary */}
           <Card className="shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Payroll Summary (Current Period)</CardTitle>
               <IndianRupee className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-               {/* Pass necessary dates or fetch within component */}
-              <PayrollSummary employeeId={employeeId} />
+              <PayrollSummary employeeId={employeeId} /> {/* Might need adjustment based on logged-in user/admin view */}
             </CardContent>
           </Card>
-           <Card className="shadow-sm md:col-span-2 lg:col-span-1">
+
+          {/* Attendance Anomalies */}
+          <Card className="shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Attendance Anomalies</CardTitle>
               <AlertTriangle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {/* Needs logic to fetch recent attendance records */}
+              {/* Adjust anomaly fetching based on admin/user role */}
               <AttendanceAnomalies employeeId={employeeId} />
             </CardContent>
           </Card>
+
+           {/* Removed the manual ClockInComponent */}
         </div>
-         {/* Could add more sections like detailed timesheets, reports etc. */}
+         {/* Further sections like timesheets, reports can be added */}
       </main>
     </div>
   );

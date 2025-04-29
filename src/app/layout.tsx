@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // Using Inter as a clean sans-serif font
+import { Poppins } from "next/font/google"; // Import Poppins
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster"; // Import Toaster
 
-const inter = Inter({
+const poppins = Poppins({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // Include necessary weights
   variable: "--font-sans", // Define CSS variable for the font
 });
 
@@ -24,7 +25,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          inter.variable
+          poppins.variable // Use Poppins variable
         )}
       >
         {children}
