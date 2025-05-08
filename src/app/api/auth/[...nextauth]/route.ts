@@ -1,24 +1,29 @@
-import NextAuth, { type NextAuthOptions } from 'next-auth';
-import CredentialsProvider from 'next-auth/providers/credentials';
-import { SupabaseAdapter } from '@next-auth/supabase-adapter';
+import NextAuth, { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { SupabaseAdapter } from "@next-auth/supabase-adapter";
 // Supabase client for adapter. Ensure this path is correct.
 // For adapter, we usually need service_role key, not anon key.
 // The supabase client used by the adapter should be configured with the service_role key.
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 
 const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || "",
 );
-
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        email: { label: 'Email', type: 'email', placeholder: 'admin@example.com' },
-        password: { label: 'Password', type: 'password' },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "admin@example.com",
+        },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         const adminEmail = process.env.ADMIN_EMAIL;
@@ -30,13 +35,16 @@ export const authOptions: NextAuthOptions = {
 
         // IMPORTANT: In a real app, use bcrypt or a similar library to hash and compare passwords.
         // Storing plain text passwords or comparing them directly is highly insecure.
-        if (credentials.email === adminEmail && credentials.password === adminPassword) {
+        if (
+          credentials.email === adminEmail &&
+          credentials.password === adminPassword
+        ) {
           // For Supabase adapter, it's best to find or create the user in Supabase `users` table.
           // The adapter will then link this user to NextAuth sessions/accounts.
           // Let's try to fetch user from Supabase to ensure it exists for the adapter.
           // This part might need adjustment based on how you manage users in Supabase (e.g., Supabase Auth vs. custom table).
           // Assuming NextAuth adapter manages the users table linked to Supabase Auth.
-          
+
           // For CredentialsProvider, we typically return a user object.
           // The SupabaseAdapter will use this information.
           // It needs an 'id' that can be used as a foreign key.
@@ -56,8 +64,8 @@ export const authOptions: NextAuthOptions = {
             // For demo with SupabaseAdapter, often email is enough for it to find/create.
             // The adapter handles the ID generation/linking if the user is new to it.
             email: adminEmail,
-            name: 'Admin User', // Optional: name
-            role: 'manager', // Custom property for authorization
+            name: "Admin User", // Optional: name
+            role: "manager", // Custom property for authorization
           } as any; // Using `any` here because NextAuth User type might not have `role` by default.
         }
         return null;
@@ -69,7 +77,7 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.SUPABASE_SERVICE_ROLE_KEY!,
   }),
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -97,11 +105,11 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: '/login',
+    signIn: "/login",
     // error: '/auth/error', // Optional custom error page
   },
   // Enable debug messages in development
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);
