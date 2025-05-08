@@ -1,14 +1,7 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-  useTransition,
-} from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import type { PostgrestError } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +28,7 @@ import {
   ChevronRight,
   Search,
   Loader2,
+  DollarSign,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AddEmployeeDialog } from "./AddEmployeeDialog";
@@ -55,6 +49,7 @@ export interface Employee {
 }
 
 const ITEMS_PER_PAGE = 10;
+const DEBOUNCE_DELAY = 300; // ms
 
 export function EmployeeManagementTable() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -71,23 +66,33 @@ export function EmployeeManagementTable() {
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(
     null,
   );
-
-  const [isPending, startTransition] = useTransition();
+  const [isCrudInProgress, setIsCrudInProgress] = useState(false);
 
   const { toast } = useToast();
 
-  const fetchEmployees = useCallback(
-    async (signal?: AbortSignal) => {
-      setIsLoading(true);
-      setError(null);
+  // Handle search term changes with debounce
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1); // Reset to first page on new search
+    }, DEBOUNCE_DELAY);
 
+    return () => clearTimeout(handler);
+  }, [searchTerm]);
+
+  // Fetch employees from Supabase
+  const fetchEmployees = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
       const from = (currentPage - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
 
       let query = supabase
         .from("employees")
         .select("*", { count: "exact" })
-        .order("name", { ascending: true }) // Sort by name
+        .order("name", { ascending: true })
         .range(from, to);
 
       if (debouncedSearchTerm) {
@@ -96,71 +101,43 @@ export function EmployeeManagementTable() {
         );
       }
 
-      if (signal) {
-        query.abortSignal(signal);
-      }
+      const { data, error, count } = await query;
 
-      try {
-        const { data, error: dbError, count } = await query;
-
-        if (dbError) {
-          if (signal?.aborted) {
-            console.log("Fetch aborted");
-            return;
-          }
-          // Log the full error object for debugging purposes
-          console.error("Error fetching employees:", dbError);
-
-          // Safe access to error message with fallback
-          const errorMessage = dbError.message || "Unknown database error";
-          setError(`Failed to load employees. ${errorMessage}`);
-
-          toast({
-            title: "Error",
-            description: "Could not fetch employee data.",
-            variant: "destructive",
-          });
-
-          setEmployees([]); // Clear employees on error
-          setTotalEmployees(0);
-        } else {
-          setEmployees(data || []);
-          setTotalEmployees(count || 0);
-        }
-      } catch (err) {
-        // This catches any other errors that might occur
-        console.error("Unexpected error in fetchEmployees:", err);
-        setError("An unexpected error occurred while fetching employees.");
+      if (error) {
+        console.error("Error fetching employees:", error.message);
+        setError(`Failed to load employees. ${error.message}`);
         toast({
           title: "Error",
-          description: "An unexpected error occurred.",
+          description: "Could not fetch employee data.",
           variant: "destructive",
         });
         setEmployees([]);
         setTotalEmployees(0);
-      } finally {
-        setIsLoading(false);
+      } else {
+        setEmployees(data || []);
+        setTotalEmployees(count || 0);
       }
-    },
-    [currentPage, debouncedSearchTerm, toast],
-  );
+    } catch (err: any) {
+      console.error("Unexpected error in fetchEmployees:", err);
+      setError("An unexpected error occurred while fetching employees.");
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive",
+      });
+      setEmployees([]);
+      setTotalEmployees(0);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentPage, debouncedSearchTerm, toast]);
 
+  // Initial fetch and when dependencies change
   useEffect(() => {
-    const abortController = new AbortController();
-    startTransition(() => {
-      fetchEmployees(abortController.signal);
-    });
-    return () => abortController.abort();
+    fetchEmployees();
   }, [fetchEmployees]);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      setCurrentPage(1); // Reset to first page on new search
-    }, 500); // 500ms debounce for search term
-    return () => clearTimeout(handler);
-  }, [searchTerm]);
-
+  // Handle employee actions
   const handleAddEmployee = () => {
     setSelectedEmployee(null);
     setIsAddDialogOpen(true);
@@ -176,21 +153,69 @@ export function EmployeeManagementTable() {
     setIsDeleteDialogOpen(true);
   };
 
-  const totalPages = Math.ceil(totalEmployees / ITEMS_PER_PAGE);
+  const handleAddSuccess = (newEmployee: Employee) => {
+    // If we're on the first page or there are no employees yet, refresh to show the new employee
+    if (currentPage === 1 || totalEmployees === 0) {
+      fetchEmployees();
+    } else {
+      // Otherwise, just update the count
+      setTotalEmployees((prev) => prev + 1);
+      toast({
+        title: "Success",
+        description: `${newEmployee.name} added successfully.`,
+      });
+    }
+    setIsAddDialogOpen(false);
+  };
 
+  const handleEditSuccess = (updatedEmployee: Employee) => {
+    // Update the employee in the local state for immediate UI update
+    setEmployees((prevEmployees) =>
+      prevEmployees.map((emp) =>
+        emp.id === updatedEmployee.id ? updatedEmployee : emp,
+      ),
+    );
+    toast({
+      title: "Success",
+      description: `${updatedEmployee.name}'s details updated.`,
+    });
+    setIsEditDialogOpen(false);
+    setSelectedEmployee(null);
+  };
+
+  const handleDeleteSuccess = () => {
+    if (selectedEmployee) {
+      // Update local state
+      setEmployees((prevEmployees) =>
+        prevEmployees.filter((emp) => emp.id !== selectedEmployee.id),
+      );
+      setTotalEmployees((prev) => prev - 1);
+
+      toast({
+        title: "Success",
+        description: `Employee deleted successfully.`,
+      });
+    }
+    setIsDeleteDialogOpen(false);
+    setSelectedEmployee(null);
+  };
+
+  // Calculate total pages for pagination
+  const totalPages = Math.max(1, Math.ceil(totalEmployees / ITEMS_PER_PAGE));
+
+  // Memoized pagination controls
   const paginationControls = useMemo(
     () => (
       <div className="flex flex-col sm:flex-row items-center justify-between pt-4 gap-2">
         <span className="text-sm text-muted-foreground order-2 sm:order-1">
-          Page {currentPage} of {totalPages > 0 ? totalPages : 1} (
-          {totalEmployees} employees)
+          Page {currentPage} of {totalPages} ({totalEmployees} employees)
         </span>
         <div className="flex gap-2 order-1 sm:order-2">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            disabled={currentPage === 1 || isLoading || isPending}
+            disabled={currentPage === 1 || isLoading || isCrudInProgress}
           >
             <ChevronLeft className="h-4 w-4 mr-1" /> Previous
           </Button>
@@ -204,7 +229,7 @@ export function EmployeeManagementTable() {
               currentPage === totalPages ||
               totalPages === 0 ||
               isLoading ||
-              isPending
+              isCrudInProgress
             }
           >
             Next <ChevronRight className="h-4 w-4 ml-1" />
@@ -212,11 +237,11 @@ export function EmployeeManagementTable() {
         </div>
       </div>
     ),
-    [currentPage, totalPages, totalEmployees, isLoading, isPending],
+    [currentPage, totalPages, totalEmployees, isLoading, isCrudInProgress],
   );
 
+  // Show error if not also loading
   if (error && !isLoading) {
-    // Show error only if not also loading initial data
     return (
       <div className="text-destructive p-4 border border-destructive/50 bg-destructive/10 rounded-md flex items-center">
         <AlertTriangle className="h-5 w-5 mr-2" />
@@ -227,6 +252,7 @@ export function EmployeeManagementTable() {
 
   return (
     <div className="space-y-4 h-full flex flex-col">
+      {/* Search and Add Button */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="relative w-full sm:max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
@@ -236,18 +262,19 @@ export function EmployeeManagementTable() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full"
-            disabled={isPending}
+            disabled={isLoading || isCrudInProgress}
           />
         </div>
         <Button
           onClick={handleAddEmployee}
-          disabled={isPending}
+          disabled={isLoading || isCrudInProgress}
           className="w-full sm:w-auto"
         >
           <UserPlus className="mr-2 h-4 w-4" /> Add Employee
         </Button>
       </div>
 
+      {/* Employees Table */}
       <div className="overflow-x-auto rounded-md border flex-grow">
         <Table>
           <TableHeader>
@@ -261,7 +288,7 @@ export function EmployeeManagementTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {(isLoading || isPending) && employees.length === 0 ? (
+            {isLoading ? (
               [...Array(5)].map((_, i) => (
                 <TableRow key={`skeleton-${i}`}>
                   <TableCell>
@@ -284,7 +311,7 @@ export function EmployeeManagementTable() {
                   </TableCell>
                 </TableRow>
               ))
-            ) : !isLoading && !isPending && employees.length === 0 ? (
+            ) : !isLoading && employees.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -301,9 +328,15 @@ export function EmployeeManagementTable() {
               </TableRow>
             ) : (
               employees.map((employee) => (
-                <TableRow key={employee.id}>
+                <TableRow key={employee.id} className="group">
                   <TableCell className="font-medium py-3">
                     {employee.name}
+                    {employee.hourly_rate && (
+                      <span className="ml-2 hidden group-hover:inline-flex md:group-hover:hidden items-center text-muted-foreground text-xs">
+                        <DollarSign className="h-3 w-3 mr-0.5" />
+                        {employee.hourly_rate}/hr
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell className="hidden md:table-cell py-3">
                     {employee.email}
@@ -334,7 +367,7 @@ export function EmployeeManagementTable() {
                         <Button
                           variant="ghost"
                           className="h-8 w-8 p-0"
-                          disabled={isPending}
+                          disabled={isCrudInProgress}
                         >
                           <span className="sr-only">Open menu</span>
                           <MoreHorizontal className="h-4 w-4" />
@@ -362,16 +395,17 @@ export function EmployeeManagementTable() {
         </Table>
       </div>
 
+      {/* Pagination */}
       {totalEmployees > 0 && paginationControls}
 
+      {/* CRUD Dialogs */}
       <AddEmployeeDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
-        onSuccess={() => {
-          fetchEmployees(); // Re-fetch on success
-          setIsAddDialogOpen(false);
-        }}
+        onSuccess={handleAddSuccess}
+        onProcessingStateChange={setIsCrudInProgress}
       />
+
       {selectedEmployee && (
         <>
           <EditEmployeeDialog
@@ -381,12 +415,10 @@ export function EmployeeManagementTable() {
               setSelectedEmployee(null);
             }}
             employee={selectedEmployee}
-            onSuccess={() => {
-              fetchEmployees(); // Re-fetch on success
-              setIsEditDialogOpen(false);
-              setSelectedEmployee(null);
-            }}
+            onSuccess={handleEditSuccess}
+            onProcessingStateChange={setIsCrudInProgress}
           />
+
           <DeleteEmployeeConfirmDialog
             isOpen={isDeleteDialogOpen}
             onClose={() => {
@@ -395,11 +427,8 @@ export function EmployeeManagementTable() {
             }}
             employeeName={selectedEmployee.name}
             employeeId={selectedEmployee.id}
-            onSuccess={() => {
-              fetchEmployees(); // Re-fetch on success
-              setIsDeleteDialogOpen(false);
-              setSelectedEmployee(null);
-            }}
+            onSuccess={handleDeleteSuccess}
+            onProcessingStateChange={setIsCrudInProgress}
           />
         </>
       )}
