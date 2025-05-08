@@ -1,7 +1,7 @@
 import { EmployeeManagementTable } from "@/components/admin/EmployeeManagementTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users } from "lucide-react";
-import { Suspense } from "react"; // Keep Suspense for client components loading data
+import { Suspense } from "react"; 
 import { Skeleton } from "@/components/ui/skeleton";
 
 // This page itself can be a server component
@@ -44,21 +44,45 @@ export default async function AdminEmployeesPage() {
 
 function EmployeeTableSkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-        <Skeleton className="h-10 w-full sm:w-1/3" />
-        <Skeleton className="h-10 w-full sm:w-auto sm:min-w-[120px]" />
+    <div className="space-y-4 h-full flex flex-col">
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <Skeleton className="h-10 w-full sm:max-w-md" />
+        <Skeleton className="h-10 w-full sm:w-auto sm:min-w-[150px]" />
       </div>
-      <div className="overflow-x-auto rounded-md border">
-        <Skeleton className="h-12 w-full" /> {/* Header row */}
-        {[...Array(5)].map((_, i) => (
-          <Skeleton key={i} className="h-14 w-full" /> 
-        ))}
+      <div className="overflow-x-auto rounded-md border flex-grow">
+         {/* Simulating table structure */}
+        <div className="min-w-full divide-y divide-border">
+            <div className="bg-muted/50"> {/* Header row */}
+                <div className="flex">
+                    <div className="px-4 py-3.5 flex-1"><Skeleton className="h-5 w-24" /></div>
+                    <div className="px-4 py-3.5 flex-1 hidden md:block"><Skeleton className="h-5 w-32" /></div>
+                    <div className="px-4 py-3.5 flex-1"><Skeleton className="h-5 w-20" /></div>
+                    <div className="px-4 py-3.5 flex-1 hidden lg:block"><Skeleton className="h-5 w-16" /></div>
+                    <div className="px-4 py-3.5 flex-1 hidden lg:block"><Skeleton className="h-5 w-16" /></div>
+                    <div className="px-4 py-3.5 w-20 text-right"><Skeleton className="h-8 w-8 ml-auto rounded-full" /></div>
+                </div>
+            </div>
+            <div> {/* Body rows */}
+            {[...Array(5)].map((_, i) => (
+                 <div key={i} className="flex border-b border-border last:border-b-0">
+                    <div className="px-4 py-3.5 flex-1"><Skeleton className="h-5 w-3/4" /></div>
+                    <div className="px-4 py-3.5 flex-1 hidden md:block"><Skeleton className="h-5 w-3/4" /></div>
+                    <div className="px-4 py-3.5 flex-1"><Skeleton className="h-5 w-1/2" /></div>
+                    <div className="px-4 py-3.5 flex-1 hidden lg:block"><Skeleton className="h-5 w-1/2" /></div>
+                    <div className="px-4 py-3.5 flex-1 hidden lg:block"><Skeleton className="h-5 w-1/2" /></div>
+                    <div className="px-4 py-3.5 w-20 text-right flex justify-end items-center"><Skeleton className="h-8 w-8 rounded-full" /></div>
+                </div>
+            ))}
+            </div>
+        </div>
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-2">
-        <Skeleton className="h-8 w-full sm:w-32" />
-        <Skeleton className="h-8 w-full sm:w-48" />
+        <Skeleton className="h-8 w-full sm:w-40" /> {/* Pagination info */}
+        <div className="flex gap-2 w-full sm:w-auto">
+            <Skeleton className="h-9 w-1/2 sm:w-24" /> {/* Prev button */}
+            <Skeleton className="h-9 w-1/2 sm:w-24" /> {/* Next button */}
+        </div>
       </div>
     </div>
-  )
+  );
 }

@@ -82,17 +82,18 @@ export default {
   					height: '0'
   				}
   			},
-             // Ensure shimmer keyframes are defined
+             // Ensure shimmer keyframes are defined for a smoother, slightly more visible effect
              shimmer: {
-               '0%': { transform: 'translateX(-100%)' },
-               '100%': { transform: 'translateX(100%)' },
+               '0%': { transform: 'translateX(-100%)', opacity: '0.6' },
+               '50%': { opacity: '1' },
+               '100%': { transform: 'translateX(100%)', opacity: '0.6' },
              },
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
              // Use shimmer animation
-             shimmer: 'shimmer 1.5s infinite linear',
+             shimmer: 'shimmer 2s infinite linear', // Adjusted duration for a smoother feel
   		}
   	}
   },
